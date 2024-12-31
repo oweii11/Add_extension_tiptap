@@ -1,0 +1,50 @@
+import { Mark } from '@tiptap/core'
+
+const CustomMark = Mark.create({
+  name: 'customMark',
+// Your code goes here.
+
+  addAttributes() {
+    return {
+      color: {
+        default: 'yellow',
+      },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'span[style*="background-color"]',
+        getAttrs: (dom) => {
+          const style = dom.style.backgroundColor
+          return { color: style }
+        },
+      },
+    ]
+  },
+
+  renderHTML({ node, HTMLAttributes }) {
+    return [
+      'span',
+      {
+        style: `background-color: ${node.attrs.color};`,
+        ...HTMLAttributes,
+      },
+      0, 
+    ]
+  },
+
+  addCommands() {
+    return {
+      setCustomMark: (color = 'yellow') => ({ commands }) => {
+        return commands.toggleMark(this.name, { color })
+      },
+      unsetCustomMark: () => ({ commands }) => {
+        return commands.unsetMark(this.name)
+      },
+    }
+  },
+})
+
+export default CustomMark

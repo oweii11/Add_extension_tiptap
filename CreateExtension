@@ -1,0 +1,56 @@
+import { Node } from '@tiptap/core'
+
+const CustomBlockNode = Node.create({
+  name: 'customBlock',
+  group: 'block',
+  content: 'inline*', 
+  inline: false,
+
+  addAttributes() {
+    return {
+      id: {
+        default: null,
+      },
+      backgroundColor: {
+        default: 'lightgray',
+      },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'div.custom-block',
+        getAttrs: (dom) => ({
+          id: dom.id,
+          backgroundColor: dom.style.backgroundColor || 'lightgray',
+        }),
+      },
+    ]
+  },
+
+  renderHTML({ node, HTMLAttributes }) {
+    return [
+      'div',
+      {
+        class: 'custom-block',
+        style: `background-color: ${node.attrs.backgroundColor};`,
+        id: node.attrs.id,
+      },
+      0,
+    ]
+  },
+
+  addCommands() {
+    return {
+      setCustomBlock: (attrs = {}) => ({ commands }) => {
+        return commands.insertContent({
+          type: this.name,
+          attrs,
+        })
+      },
+    }
+  },
+})
+
+export default CustomBlockNode
